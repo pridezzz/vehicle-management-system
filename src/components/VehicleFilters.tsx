@@ -1,5 +1,6 @@
 import React from 'react';
 import { VehicleMake } from '../types';
+import DebouncedSearchInput from './DebouncedSearchInput';
 
 interface VehicleFiltersProps {
   search: string;
@@ -31,18 +32,11 @@ const VehicleFilters: React.FC<VehicleFiltersProps> = ({
     }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
         <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Search:</label>
-        <input
-          type="text"
+        <DebouncedSearchInput
           value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={onSearchChange}
           placeholder="Search models or makes..."
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            fontSize: '14px',
-            minWidth: '200px'
-          }}
+          style={{ minWidth: '200px' }}
         />
       </div>
       

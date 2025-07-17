@@ -1,26 +1,49 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
+import toast from 'react-hot-toast';
 import { useGetModelsQuery, useGetMakesQuery, useDeleteModelMutation } from '../api';
 import { VehicleModelCard, VehicleFilters, VehicleSorting, Pagination } from '../components';
 import { SortParams, FilterParams } from '../types';
+import { storageUtils } from '../utils';
 
 const VehicleList: React.FC = () => {
   const navigate = useNavigate();
+  
+  // Initialize state from localStorage
+  const persistedFilters = storageUtils.getFilters();
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [search, setSearch] = useState('');
-  const [selectedMakeId, setSelectedMakeId] = useState<number | null>(null);
-  const [sort, setSort] = useState<SortParams>({ field: 'name', direction: 'asc' });
+  const [limit, setLimit] = useState(persistedFilters.pageSize);
+  const [search, setSearch] = useState(persistedFilters.search);
+  const [selectedMakeId, setSelectedMakeId] = useState<number | null>(persistedFilters.makeId);
+  const [sort, setSort] = useState<SortParams>({ 
+    field: persistedFilters.sortField as SortParams['field'], 
+    direction: persistedFilters.sortDirection 
+  });
+
+  // Debounced search to avoid excessive API calls
+  const [debouncedSearch] = useDebounce(search, 300);
 
   const queryParams = useMemo(() => ({
     page,
     limit,
     sort,
     filter: {
-      search: search.trim() || undefined,
+      search: debouncedSearch.trim() || undefined,
       makeId: selectedMakeId || undefined,
     } as FilterParams,
-  }), [page, limit, sort, search, selectedMakeId]);
+  }), [page, limit, sort, debouncedSearch, selectedMakeId]);
+
+  // Persist filter changes to localStorage
+  useEffect(() => {
+    storageUtils.saveFilters({
+      search: debouncedSearch,
+      makeId: selectedMakeId,
+      sortField: sort.field,
+      sortDirection: sort.direction,
+      pageSize: limit,
+    });
+  }, [debouncedSearch, selectedMakeId, sort.field, sort.direction, limit]);
 
   const { data: modelsData, isLoading: modelsLoading, error: modelsError } = useGetModelsQuery(queryParams);
   const { data: makes = [], isLoading: makesLoading } = useGetMakesQuery();
@@ -30,13 +53,15 @@ const VehicleList: React.FC = () => {
     navigate(`/edit/${id}`);
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this vehicle model?')) {
+  const handleDelete = async (id: number, modelName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${modelName}"? This action cannot be undone.`)) {
+      const loadingToast = toast.loading('Deleting vehicle model...');
       try {
         await deleteModel(id).unwrap();
+        toast.success(`"${modelName}" deleted successfully`, { id: loadingToast });
       } catch (error) {
         console.error('Failed to delete model:', error);
-        alert('Failed to delete model. Please try again.');
+        toast.error('Failed to delete model. Please try again.', { id: loadingToast });
       }
     }
   };
@@ -157,7 +182,7 @@ const VehicleList: React.FC = () => {
                 key={model.id}
                 model={model}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                onDelete={(id) => handleDelete(id, model.name)}
               />
             ))}
           </div>

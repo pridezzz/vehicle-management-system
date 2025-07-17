@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { 
   useGetModelQuery, 
   useGetMakesQuery, 
   useCreateModelMutation, 
   useUpdateModelMutation 
 } from '../api';
+import { validationUtils } from '../utils';
 
 interface VehicleFormData {
   name: string;
@@ -52,16 +54,22 @@ const VehicleForm: React.FC = () => {
   }, [isEdit, model, reset]);
 
   const onSubmit = async (data: VehicleFormData) => {
+    const actionText = isEdit ? 'Updating' : 'Creating';
+    const loadingToast = toast.loading(`${actionText} vehicle model...`);
+    
     try {
       if (isEdit && modelId) {
-        await updateModel({ id: modelId, data }).unwrap();
+        const result = await updateModel({ id: modelId, data }).unwrap();
+        toast.success(`"${result.name}" updated successfully`, { id: loadingToast });
       } else {
-        await createModel(data).unwrap();
+        const result = await createModel(data).unwrap();
+        toast.success(`"${result.name}" created successfully`, { id: loadingToast });
       }
       navigate('/');
     } catch (error) {
       console.error('Failed to save model:', error);
-      alert('Failed to save model. Please try again.');
+      const errorMessage = (error as any)?.message || 'Failed to save model. Please try again.';
+      toast.error(errorMessage, { id: loadingToast });
     }
   };
 
@@ -176,13 +184,9 @@ const VehicleForm: React.FC = () => {
             control={control}
             rules={{
               required: 'Model name is required',
-              minLength: {
-                value: 2,
-                message: 'Model name must be at least 2 characters'
-              },
-              maxLength: {
-                value: 50,
-                message: 'Model name must be no more than 50 characters'
+              validate: {
+                notEmpty: (value) => validationUtils.isNotEmpty(value) || 'Model name cannot be empty',
+                validLength: (value) => validationUtils.isValidLength(value, 2, 50) || 'Model name must be between 2 and 50 characters',
               },
             }}
             render={({ field }) => (
@@ -204,13 +208,9 @@ const VehicleForm: React.FC = () => {
             control={control}
             rules={{
               required: 'Abbreviation is required',
-              minLength: {
-                value: 1,
-                message: 'Abbreviation must be at least 1 character'
-              },
-              maxLength: {
-                value: 10,
-                message: 'Abbreviation must be no more than 10 characters'
+              validate: {
+                notEmpty: (value) => validationUtils.isNotEmpty(value) || 'Abbreviation cannot be empty',
+                validLength: (value) => validationUtils.isValidLength(value, 1, 10) || 'Abbreviation must be between 1 and 10 characters',
               },
             }}
             render={({ field }) => (
@@ -232,7 +232,9 @@ const VehicleForm: React.FC = () => {
             control={control}
             rules={{
               required: 'Make selection is required',
-              validate: (value) => value > 0 || 'Please select a make',
+              validate: {
+                validId: (value) => validationUtils.isValidId(value) || 'Please select a valid make',
+              },
             }}
             render={({ field }) => (
               <select

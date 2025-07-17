@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { Toaster } from 'react-hot-toast';
 import { store } from './store/store';
 import { Layout } from './components';
 import { VehicleList, VehicleForm } from './pages';
@@ -17,6 +18,26 @@ const App: React.FC = () => {
             <Route path="edit/:id" element={<VehicleForm />} />
           </Route>
         </Routes>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              style: {
+                background: '#10b981',
+              },
+            },
+            error: {
+              style: {
+                background: '#ef4444',
+              },
+            },
+          }}
+        />
       </Router>
     </Provider>
   );

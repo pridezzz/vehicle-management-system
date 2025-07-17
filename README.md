@@ -1,35 +1,89 @@
 # 🚗 Vehicle Management System
 
-A modern React + TypeScript application for managing vehicle models and makes.
+A modern React + TypeScript application for managing vehicle models and makes, built with real-time API integration and enhanced user experience.
 
 ## ✨ Features
 
+### Core Functionality
 - **Complete CRUD Operations** - Create, read, update, and delete vehicle models
-- **Advanced Search & Filtering** - Search by model/make name, filter by specific makes
-- **Multi-field Sorting** - Sort by name, abbreviation, make, or ID
-- **Pagination** - Customizable page sizes (5, 10, 20, 50 items)
-- **Form Validation** - Real-time validation with React Hook Form
+- **Real-time API Integration** - Supabase backend with server-side filtering, sorting, and pagination
+- **Advanced Search & Filtering** - Debounced search with 300ms delay, filter by specific makes
+- **Multi-field Sorting** - Sort by name, abbreviation, make, or ID with server-side processing
+- **Smart Pagination** - Customizable page sizes (5, 10, 20, 50 items) with efficient data loading
+- **Form Validation** - Real-time validation with React Hook Form and custom validation utilities
 - **Responsive Design** - Works perfectly on desktop, tablet, and mobile
-- **Type Safety** - 100% TypeScript with strict typing
-- **Modern Architecture** - Redux Toolkit + RTK Query for state management
+- **Type Safety** - 100% TypeScript with strict typing throughout
+
+### Enhanced User Experience
+- **🔍 Debounced Search** - Intelligent search with 300ms debounce to reduce API calls
+- **🍞 Toast Notifications** - Real-time feedback for all user actions (create, update, delete)
+- **💾 Persistent Filters** - Filter state saved in localStorage between sessions
+- **⚡ Optimistic UI** - Immediate visual feedback while API calls process
+- **🎯 Smart Validation** - Custom validation utilities with helpful error messages
+- **🔄 Loading States** - Professional loading indicators during API operations
+
+### Technical Excellence
+- **Modern Architecture** - Redux Toolkit + RTK Query for enterprise-grade state management
+- **Supabase Integration** - Real PostgreSQL database with automatic API generation
+- **Airbnb Standards** - Following Airbnb React naming conventions and best practices
+- **Performance Optimized** - Efficient API queries, debounced inputs, and memoized components
 
 ## 🛠️ Tech Stack
 
+### Frontend
 - **React 18** - Latest React with hooks and concurrent features
 - **TypeScript** - Full type safety throughout the application
 - **Redux Toolkit** - Modern Redux with RTK Query for API calls
-- **React Router v6** - Client-side routing
+- **React Router v6** - Client-side routing with nested routes
 - **React Hook Form** - Performant form handling with validation
-- **CSS-in-JS** - Inline styles for component-scoped styling
+- **React Hot Toast** - Beautiful toast notifications with animations
+- **use-debounce** - Debounced search optimization
+
+### Backend & Database
+- **Supabase** - PostgreSQL database with real-time API
+- **REST API** - Server-side filtering, sorting, and pagination
+- **Row Level Security** - Built-in authentication and authorization
+
+### Development & Build
+- **Create React App** - Zero-configuration build tooling
+- **ESLint** - Code quality and consistency
+- **Jest + React Testing Library** - Comprehensive testing suite
+- **CSS-in-JS** - Component-scoped styling for better maintainability
 
 ## 🚀 Quick Start
 
-### Development
+### Prerequisites
+1. **Node.js 16+** - For running the React application
+2. **Supabase Account** - For database and API (optional for demo)
+
+### Development Setup
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/vehicle-management-system.git
+cd vehicle-management-system
+
+# Install dependencies
 npm install
+
+# Set up environment variables (optional)
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
+
+# Start development server
 npm start
 ```
 Open [http://localhost:3000](http://localhost:3000)
+
+### Supabase Setup (Optional)
+The app works with a mock fallback, but for full functionality:
+
+1. **Create a Supabase project** at [supabase.com](https://supabase.com)
+2. **Run the SQL schema** (see `src/api/supabase.ts` for schema)
+3. **Add environment variables** to `.env.local`:
+   ```
+   REACT_APP_SUPABASE_URL=your-project-url
+   REACT_APP_SUPABASE_ANON_KEY=your-anon-key
+   ```
 
 ### Testing
 ```bash

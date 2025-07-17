@@ -1,37 +1,31 @@
-You are a senior frontend engineer helping me build a job test project for Mono Software.
+You are a senior frontend engineer helping me build a job test project for a React developer role at a company.
 
-Goal:
-Create a simple React + TypeScript application that lets users view, create, edit, and delete vehicles.
+Build a minimalistic web application using React and TypeScript. The application must support full CRUD functionality and interact with a REST API (using Supabase, Firebase, or a custom backend).
 
-Each vehicle consists of:
-- VehicleMake: id, name, abrv (e.g., BMW)
-- VehicleModel: id, makeId, name, abrv (e.g., 325, X5, linked to BMW)
+The project domain is a Vehicle Management System with the following data models:
+- VehicleMake: { id: number, name: string, abrv: string }
+- VehicleModel: { id: number, makeId: number, name: string, abrv: string }
+VehicleModels are linked to VehicleMakes via the makeId field.
 
-The project must:
-- Display a list/grid of VehicleModels (with their Make shown)
-- Support filtering, sorting, and pagination (simulate via local data or API)
-- Include Create/Edit pages with form validation
-- Use React Hook Form for forms
+Requirements:
+- Display a list/grid of VehicleModels
+- Include filtering, sorting, and pagination — all handled via REST API
+- Persist filter state between sessions (e.g. via localStorage)
+- Include full CRUD operations: create, read, update, delete
+- Use React Hook Form for create/edit forms with validation
 - Use Redux Toolkit + RTK Query for state and API
-- Use React Router for page navigation
-- Use a folder structure with: `/components`, `/pages`, `/store`, `/api`, `/utils`
+- Use TypeScript throughout (no use of `any`)
+- Use React Router for navigation
+- Follow Airbnb React naming conventions
+- Use this folder structure:
+  /components, /pages, /store, /api, /utils
+- Use Git with meaningful, structured commits per feature or module
+- Ensure the app is buildable, clean, and production-ready
 
-Constraints:
-- Written in TypeScript (no `any`)
-- Follow good commit practices (explain later)
-- Output code using fenced code blocks
-- Explain your reasoning only if I ask
-
-Step-by-step:
-1. Start by creating the folder structure and a simple file scaffold
-2. Then scaffold a routing layout using React Router
-3. Next, generate the data types and Redux slices for VehicleMake and VehicleModel
-4. After that, generate the RTK Query setup
-5. Then, build the list/grid view (with sorting, filtering, pagination)
-6. Then the Create/Edit forms with React Hook Form
-
-Let’s begin.
-
-🔹 First task:  
-Create the basic folder structure and starter files (no functionality yet). Use `src/` as the root.
-Output just the folder/file structure using tree-style formatting, and include placeholder code in key files (e.g., App.tsx, index.tsx).
+Additional requirement:
+Include at least 2 small enhancements to increase the chance of being hired, such as:
+- Search bar with debounce
+- Optimistic UI updates
+- Toast notifications
+- Confirmation modals
+- Dark mode toggle
